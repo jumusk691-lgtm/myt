@@ -33,7 +33,7 @@ export function HeroSection() {
 
         <p className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
           Experience zero brokerage, fast execution, and secure trading. Trade
-          on NSE/BSE with 8x leverage and MCX with 500x leverage.
+          on NSE/BSE with leverage.
         </p>
 
         {/* Rating + testimonial */}
