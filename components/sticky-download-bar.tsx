@@ -18,7 +18,7 @@ export function StickyDownloadBar() {
           </div>
         </div>
 
-        <
+        <a
           href="https://www.mediafire.com/file/xz412xcsbc6ugff/MYT🇮🇳.apk/file"
           target="_blank"
           rel="noopener noreferrer"
