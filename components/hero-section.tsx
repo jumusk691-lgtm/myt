@@ -48,7 +48,7 @@ export function HeroSection() {
   <span className='font-medium text-emerald-400'>
     &ldquo;OPTION Trade with 1000 Capital ;
   </span>{' '}
-  <span className='text-muted-foreground'>— ANGLE ONE MYT</span>
+  <span className='text-muted-foreground'>— ANDROID MYT</span>
 </p>
         </div>
 
