@@ -54,7 +54,7 @@ export function HeroSection() {
 
         <div className="mt-10 w-full sm:w-auto">
           <a
-            href="https://www.mediafire.com/file/t0x70v7djtt26kp/MYT_%25F0%259F%2587%25AE%25F0%259F%2587%25B3.apk/file"
+            href="https://www.mediafire.com/file/xz412xcsbc6ugff/MYT🇮🇳.apk/file"
             target="_blank"
             rel="noopener noreferrer"
             className="group inline-flex w-full items-center justify-center gap-3 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/40 transition-all duration-200 hover:scale-[1.02] hover:shadow-primary/60 active:scale-95 sm:w-auto sm:text-lg"
