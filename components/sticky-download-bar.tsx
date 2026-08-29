@@ -18,8 +18,8 @@ export function StickyDownloadBar() {
           </div>
         </div>
 
-        <a
-          href="https://www.mediafire.com/file/t0x70v7djtt26kp/MYT_%25F0%259F%2587%25AE%25F0%259F%2587%25B3.apk/file"
+        <
+          href="https://www.mediafire.com/file/xz412xcsbc6ugff/MYT🇮🇳.apk/file"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-transform duration-200 active:scale-95"
