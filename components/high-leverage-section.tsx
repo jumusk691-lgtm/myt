@@ -5,13 +5,13 @@ const cards = [
   {
     icon: LineChart,
     market: 'NSE/BSE Options & Futures',
-    leverage: 'x',
+    leverage: 'MAX',
     note: 'Amplify your equity derivatives positions',
   },
   {
     icon: Flame,
     market: 'MCX Commodities (Gold, Crude Oil)',
-    leverage: 'x',
+    leverage: 'MAX',
     note: 'Maximum firepower on commodity trades',
   },
 ]
