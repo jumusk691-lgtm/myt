@@ -51,7 +51,7 @@ export function CommunityCtaSection() {
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <a
-            href="https://www.mediafire.com/file/xz412xcsbc6ugff/MYT🇮🇳.apk/file"
+            href="https://drive.google.com/file/d/1j0wTIxvYdzE_mTOpUn2e7LmnilC9uWeW/view?usp=drivesdk"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/40 transition-all duration-200 hover:scale-[1.02] active:scale-95 sm:w-auto"
