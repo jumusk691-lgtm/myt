@@ -6,7 +6,7 @@ const steps = [
     icon: Download,
     title: 'Download APK',
     text: 'Click download and install the MYT app.',
-    href: 'https://www.mediafire.com/file/xz412xcsbc6ugff/MYT🇮🇳.apk/file', 
+    href: 'https://drive.google.com/file/d/1j0wTIxvYdzE_mTOpUn2e7LmnilC9uWeW/view?usp=drivesdk', 
   },
   {
     icon: Smartphone,
