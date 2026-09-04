@@ -14,7 +14,7 @@ export function SiteHeader() {
         </a>
 
         <a
-          href="https://www.mediafire.com/file/xz412xcsbc6ugff/MYT🇮🇳.apk/file"
+          href="https://drive.google.com/file/d/1j0wTIxvYdzE_mTOpUn2e7LmnilC9uWeW/view?usp=drivesdk"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-transform duration-200 hover:scale-[1.03] active:scale-95"
