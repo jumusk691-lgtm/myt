@@ -1,19 +1,18 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getDatabase } from "firebase/database";
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBAH3rgHd_7IE2KBmd2FTbc_4vmoKiSulA",
-  authDomain: "trade-f600a.firebaseapp.com", 
+  apiKey: "AIzaSyD9JvroqZtwREJX51m6Jg_dRfYdvuuQHvU",
+  authDomain: "trade-f600a.firebaseapp.com",
   databaseURL: "https://trade-f600a-default-rtdb.firebaseio.com",
   projectId: "trade-f600a",
   storageBucket: "trade-f600a.firebasestorage.app",
   messagingSenderId: "322191828273",
-  appId: "1:322191828273:android:34e8fb8abdf9815b013c10"
+  appId: "1:322191828273:web:25a6f46512472d32013c10"
 };
 
-// Firebase initialize karo
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-
-export const auth = getAuth(app);
-export const database = getDatabase(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
