@@ -9,7 +9,7 @@ import {
   signOut 
 } from "firebase/auth";
 import { ref, set } from "firebase/database";
-import { Smartphone, Lock, Mail, User, Phone, Gift } from "lucide-react";
+import { Smartphone, Lock, Mail, User, Phone, Gift, ShieldCheck } from "lucide-react";
 
 export function RegistrationSection() {
   const [isLoginMode, setIsLoginMode] = useState(false);
@@ -19,6 +19,12 @@ export function RegistrationSection() {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [referral, setReferral] = useState("");
+
+  // OTP Verification States
+  const [otpSent, setOtpSent] = useState(false);
+  const [enteredOtp, setEnteredOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -31,32 +37,80 @@ export function RegistrationSection() {
     return () => unsubscribe();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Step 1: Send OTP via Backend API Route
+  const handleRequestOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (mobile.length !== 10) {
+      alert("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // 6-digit random OTP generate karna
+      const randomOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      setGeneratedOtp(randomOtp);
+
+      // Backend API Route ko call karna jo Brevo se email bhejega
+      const res = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, otp: randomOtp }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setOtpSent(true);
+        alert("OTP successfully sent to your email address!");
+      } else {
+        alert("Failed to send OTP: " + (data.error || "Unknown error"));
+      }
+    } catch (error: any) {
+      alert("Error: " + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Step 2: Verify OTP & Register User in Firebase
+  const handleVerifyAndRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (enteredOtp !== generatedOtp) {
+      alert("Invalid OTP! Kripya sahi OTP enter karein.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const newUser = userCredential.user;
+
+      await set(ref(database, 'users_details/' + newUser.uid), {
+        uid: newUser.uid,
+        fullName: fullName,
+        email: email,
+        mobile: mobile,
+        referralCode: referral || "N/A",
+        createdAt: new Date().toISOString()
+      });
+
+      alert("Email Verified & Registration Successful!");
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle Login
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (isLoginMode) {
-        await signInWithEmailAndPassword(auth, email, password);
-        alert("Login Successful! You can now download the APK.");
-      } else {
-        if (mobile.length !== 10) {
-          alert("Please enter a valid 10-digit mobile number.");
-          return;
-        }
-
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const newUser = userCredential.user;
-
-        await set(ref(database, 'users_details/' + newUser.uid), {
-          uid: newUser.uid,
-          fullName: fullName,
-          email: email,
-          mobile: mobile,
-          referralCode: referral || "N/A",
-          createdAt: new Date().toISOString()
-        });
-
-        alert("Registration Successful! Data saved to Firebase.");
-      }
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("Login Successful! You can now download the APK.");
     } catch (error: any) {
       alert(error.message);
     }
@@ -113,120 +167,190 @@ export function RegistrationSection() {
                 Logout Account
               </button>
             </div>
-          ) : (
-            <div>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                
-                {!isLoginMode && (
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Full Name (KYC Name)</label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-                      <input 
-                        type="text" 
-                        value={fullName} 
-                        onChange={(e) => setFullName(e.target.value)} 
-                        required={!isLoginMode}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
-                        placeholder="Enter your full name"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Email Address</label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-                    <input 
-                      type="email" 
-                      value={email} 
-                      onChange={(e) => setEmail(e.target.value)} 
-                      required
-                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
-                      placeholder="name@example.com"
-                    />
-                  </div>
+          ) : isLoginMode ? (
+            /* LOGIN FORM */
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <input 
+                    type="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    required
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
+                    placeholder="name@example.com"
+                  />
                 </div>
-
-                {!isLoginMode && (
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">10-Digit Mobile Number</label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-                      <input 
-                        type="tel" 
-                        maxLength={10}
-                        value={mobile} 
-                        onChange={(e) => setMobile(e.target.value)} 
-                        required={!isLoginMode}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
-                        placeholder="9876543210"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">
-                    {isLoginMode ? "Password" : "Set Password"}
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-                    <input 
-                      type="password" 
-                      value={password} 
-                      onChange={(e) => setPassword(e.target.value)} 
-                      required
-                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
-                      placeholder="••••••••"
-                    />
-                  </div>
-                </div>
-
-                {!isLoginMode && (
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Referral Code (Optional)</label>
-                    <div className="relative">
-                      <Gift className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-                      <input 
-                        type="text" 
-                        value={referral} 
-                        onChange={(e) => setReferral(e.target.value)} 
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
-                        placeholder="Optional code"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <button 
-                  type="submit"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-primary/20 mt-2"
-                >
-                  {isLoginMode ? "LOGIN TO ACCOUNT" : "REGISTER NOW"}
-                </button>
-              </form>
-
-              <div className="mt-6 text-center text-sm text-muted-foreground">
-                {isLoginMode ? (
-                  <p>
-                    Don't have an account?{" "}
-                    <button onClick={() => setIsLoginMode(false)} className="text-primary underline font-semibold">
-                      Register Now
-                    </button>
-                  </p>
-                ) : (
-                  <p>
-                    Already have an account?{" "}
-                    <button onClick={() => setIsLoginMode(true)} className="text-primary underline font-semibold">
-                      Login here
-                    </button>
-                  </p>
-                )}
               </div>
-            </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <input 
+                    type="password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                    required
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-primary/20 mt-2"
+              >
+                LOGIN TO ACCOUNT
+              </button>
+            </form>
+          ) : !otpSent ? (
+            /* REGISTRATION FORM - STEP 1 (FILL DETAILS & SEND OTP) */
+            <form onSubmit={handleRequestOtp} className="space-y-4">
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Full Name (KYC Name)</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <input 
+                    type="text" 
+                    value={fullName} 
+                    onChange={(e) => setFullName(e.target.value)} 
+                    required
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <input 
+                    type="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    required
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
+                    placeholder="name@example.com"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">10-Digit Mobile Number</label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <input 
+                    type="tel" 
+                    maxLength={10}
+                    value={mobile} 
+                    onChange={(e) => setMobile(e.target.value)} 
+                    required
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
+                    placeholder="9876543210"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Set Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <input 
+                    type="password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                    required
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Referral Code (Optional)</label>
+                <div className="relative">
+                  <Gift className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <input 
+                    type="text" 
+                    value={referral} 
+                    onChange={(e) => setReferral(e.target.value)} 
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary"
+                    placeholder="Optional code"
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-primary/20 mt-2"
+              >
+                {isSubmitting ? "SENDING OTP..." : "SEND VERIFICATION OTP"}
+              </button>
+            </form>
+          ) : (
+            /* OTP VERIFICATION - STEP 2 (ENTER OTP) */
+            <form onSubmit={handleVerifyAndRegister} className="space-y-4 text-center">
+              <div className="mb-4">
+                <ShieldCheck className="h-12 w-12 text-primary mx-auto mb-2" />
+                <h3 className="text-xl font-bold">Enter Email OTP</h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Humne <span className="text-foreground font-semibold">{email}</span> par 6-digit OTP bheja hai.
+                </p>
+              </div>
+
+              <div>
+                <input 
+                  type="text" 
+                  maxLength={6}
+                  value={enteredOtp} 
+                  onChange={(e) => setEnteredOtp(e.target.value)} 
+                  required
+                  className="w-full text-center tracking-[1em] text-2xl py-3 rounded-xl bg-background border border-input text-foreground focus:outline-none focus:border-primary font-mono"
+                  placeholder="------"
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-green-600/20 mt-2"
+              >
+                {isSubmitting ? "VERIFYING..." : "VERIFY & REGISTER"}
+              </button>
+
+              <button 
+                type="button"
+                onClick={() => setOtpSent(false)}
+                className="text-xs text-muted-foreground underline hover:text-foreground mt-2 block mx-auto"
+              >
+                Wrong email? Go back
+              </button>
+            </form>
           )}
+
+          <div className="mt-6 text-center text-sm text-muted-foreground">
+            {isLoginMode ? (
+              <p>
+                Don't have an account?{" "}
+                <button onClick={() => setIsLoginMode(false)} className="text-primary underline font-semibold">
+                  Register Now
+                </button>
+              </p>
+            ) : (
+              <p>
+                Already have an account?{" "}
+                <button onClick={() => setIsLoginMode(true)} className="text-primary underline font-semibold">
+                  Login here
+                </button>
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </section>
