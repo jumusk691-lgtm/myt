@@ -9,13 +9,13 @@ export async function POST(request: Request) {
       host: 'smtp-relay.brevo.com',
       port: 587,
       auth: {
-        user: 'b80202001@smtp-brevo.com', // Tera Brevo login user
-        pass: process.env.BREVO_SMTP_KEY,   // Yeh seedha Vercel se secure key utha lega
+        user: 'b80202001@smtp-brevo.com',
+        pass: process.env.BREVO_SMTP_KEY,
       },
     });
 
     await transporter.sendMail({
-      from: '"MYT Trading" <b80202001@smtp-brevo.com>',
+      from: '"MYT" <jumusk691@gmail.com>', // Yahan apna verified email daal diya hai
       to: email,
       subject: 'Your MYT App Verification OTP',
       text: `Aapka OTP code yeh hai: ${otp}`,
@@ -27,4 +27,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
-
