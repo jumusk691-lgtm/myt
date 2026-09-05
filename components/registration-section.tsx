@@ -9,12 +9,11 @@ import {
   signOut 
 } from "firebase/auth";
 import { ref, set } from "firebase/database";
-import { Smartphone, TrendingUp, Lock, Mail, User, Phone, Gift } from "lucide-react";
+import { Smartphone, Lock, Mail, User, Phone, Gift } from "lucide-react";
 
 export function RegistrationSection() {
-  const [isLoginMode, setIsLoginMode] = useState(false); // Toggle between Login & Register
+  const [isLoginMode, setIsLoginMode] = useState(false);
   
-  // Form Fields State
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
@@ -24,7 +23,6 @@ export function RegistrationSection() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Check user auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -37,21 +35,17 @@ export function RegistrationSection() {
     e.preventDefault();
     try {
       if (isLoginMode) {
-        // --- LOGIN LOGIC ---
         await signInWithEmailAndPassword(auth, email, password);
         alert("Login Successful! You can now download the APK.");
       } else {
-        // --- REGISTER LOGIC ---
         if (mobile.length !== 10) {
           alert("Please enter a valid 10-digit mobile number.");
           return;
         }
 
-        // Firebase Auth mein user create karo (Email & Password se)
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const newUser = userCredential.user;
 
-        // Realtime Database ke 'users_details' node mein saari details save karo
         await set(ref(database, 'users_details/' + newUser.uid), {
           uid: newUser.uid,
           fullName: fullName,
@@ -73,6 +67,14 @@ export function RegistrationSection() {
     alert("Logged out successfully.");
   };
 
+  const handleSecureDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      e.preventDefault();
+      alert("Pehle Login ya Register karein, tabhi app download hoga!");
+    }
+  };
+
   if (loading) return null;
 
   return (
@@ -90,7 +92,6 @@ export function RegistrationSection() {
 
         <div className="bg-card border border-border p-6 sm:p-8 rounded-2xl shadow-xl text-card-foreground">
           {user ? (
-            // --- AGAR USER LOGGED IN HAI, TOH DIRECT DOWNLOAD LINK DIKHAYO ---
             <div className="text-center py-6">
               <h3 className="text-2xl font-bold mb-3 text-green-500">Account Verified!</h3>
               <p className="text-sm text-muted-foreground mb-6">Aapka account successfully logged in hai. Niche diye button se MediaFire APK download karein.</p>
@@ -99,6 +100,7 @@ export function RegistrationSection() {
                 href="https://www.mediafire.com/file/54n671drgrpsdjp/MYT%F0%9F%87%AE%F0%9F%87%B3.apk/file" 
                 target="_blank" 
                 rel="noopener noreferrer"
+                onClick={handleSecureDownload}
                 className="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl text-center mb-4 transition-all shadow-lg shadow-green-600/20"
               >
                 Download APK Now (MediaFire)
@@ -112,11 +114,9 @@ export function RegistrationSection() {
               </button>
             </div>
           ) : (
-            // --- LOGIN / REGISTER FORM ---
             <div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 
-                {/* Full Name (Only for Register) */}
                 {!isLoginMode && (
                   <div>
                     <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Full Name (KYC Name)</label>
@@ -134,7 +134,6 @@ export function RegistrationSection() {
                   </div>
                 )}
 
-                {/* Email Address */}
                 <div>
                   <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Email Address</label>
                   <div className="relative">
@@ -150,7 +149,6 @@ export function RegistrationSection() {
                   </div>
                 </div>
 
-                {/* Mobile Number (Only for Register) */}
                 {!isLoginMode && (
                   <div>
                     <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">10-Digit Mobile Number</label>
@@ -169,7 +167,6 @@ export function RegistrationSection() {
                   </div>
                 )}
 
-                {/* Password */}
                 <div>
                   <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">
                     {isLoginMode ? "Password" : "Set Password"}
@@ -187,7 +184,6 @@ export function RegistrationSection() {
                   </div>
                 </div>
 
-                {/* Referral Code (Only for Register) */}
                 {!isLoginMode && (
                   <div>
                     <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1">Referral Code (Optional)</label>
@@ -204,7 +200,6 @@ export function RegistrationSection() {
                   </div>
                 )}
 
-                {/* Submit Button */}
                 <button 
                   type="submit"
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-primary/20 mt-2"
@@ -213,7 +208,6 @@ export function RegistrationSection() {
                 </button>
               </form>
 
-              {/* Toggle Link */}
               <div className="mt-6 text-center text-sm text-muted-foreground">
                 {isLoginMode ? (
                   <p>
