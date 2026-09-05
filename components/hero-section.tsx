@@ -1,5 +1,6 @@
 import { Download, Zap, Rocket, ShieldCheck, Star } from 'lucide-react'
 import { AppMockup } from '@/components/app-mockup'
+import { DownloadButton } from '@/components/DownloadButton'
 
 export function HeroSection() {
   return (
@@ -53,18 +54,13 @@ export function HeroSection() {
         </div>
 
         <div className="mt-10 w-full sm:w-auto">
-          <a
-            href="https://drive.google.com/file/d/1j0wTIxvYdzE_mTOpUn2e7LmnilC9uWeW/view?usp=drivesdk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group inline-flex w-full items-center justify-center gap-3 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/40 transition-all duration-200 hover:scale-[1.02] hover:shadow-primary/60 active:scale-95 sm:w-auto sm:text-lg"
-          >
+          <DownloadButton className="group inline-flex w-full items-center justify-center gap-3 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/40 transition-all duration-200 hover:scale-[1.02] hover:shadow-primary/60 active:scale-95 sm:w-auto sm:text-lg">
             <Download
               className="h-5 w-5 transition-transform duration-200 group-hover:translate-y-0.5"
               aria-hidden="true"
             />
             Download MYT App (APK)
-          </a>
+          </DownloadButton>
 
           <p className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-brand-glow" aria-hidden="true" />
