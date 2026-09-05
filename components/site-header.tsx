@@ -1,4 +1,5 @@
 import { Download, TrendingUp } from 'lucide-react'
+import { DownloadButton } from '@/components/DownloadButton'
 
 export function SiteHeader() {
   return (
@@ -13,15 +14,10 @@ export function SiteHeader() {
           </span>
         </a>
 
-        <a
-          href="https://drive.google.com/file/d/1j0wTIxvYdzE_mTOpUn2e7LmnilC9uWeW/view?usp=drivesdk"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-transform duration-200 hover:scale-[1.03] active:scale-95"
-        >
+        <DownloadButton className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-transform duration-200 hover:scale-[1.03] active:scale-95">
           <Download className="h-4 w-4" aria-hidden="true" />
           Download App
-        </a>
+        </DownloadButton>
       </div>
     </header>
   )
