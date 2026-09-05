@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { Download, MessageCircle } from 'lucide-react'
+import { DownloadButton } from '@/components/DownloadButton'
 
 const avatars = [
   '/avatars/trader-1.png',
@@ -50,15 +51,10 @@ export function CommunityCtaSection() {
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <a
-            href="https://drive.google.com/file/d/1j0wTIxvYdzE_mTOpUn2e7LmnilC9uWeW/view?usp=drivesdk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/40 transition-all duration-200 hover:scale-[1.02] active:scale-95 sm:w-auto"
-          >
+          <DownloadButton className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/40 transition-all duration-200 hover:scale-[1.02] active:scale-95 sm:w-auto">
             <Download className="h-5 w-5" aria-hidden="true" />
             Download APK
-          </a>
+          </DownloadButton>
           <a
             href="https://chat.whatsapp.com/CrWJtNMYSTDKmCyz2y5clc"
             target="_blank"
