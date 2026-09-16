@@ -74,7 +74,7 @@ export function RegistrationSection() {
     }
   };
 
-  // Step 2: Verify OTP & Register User in Firebase
+  // Step 2: Verify OTP & Register User in Firebase with Custom Referral Code Logic
   const handleVerifyAndRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -88,12 +88,20 @@ export function RegistrationSection() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const newUser = userCredential.user;
 
+      // Custom Referral Code Generation Logic: MYT + Mobile ke beech ke 2 digits + Name ke shuru ke 2 letters
+      // Jaise: 1234567890 aur Rakesh -> MYT + 56 + RA = MYT56RA
+      const middleDigits = mobile.length >= 6 ? mobile.substring(4, 6) : "45";
+      const namePrefix = fullName.trim().length >= 2 ? fullName.trim().substring(0, 2).toUpperCase() : "US";
+      const myCustomReferralCode = `MYT${middleDigits}${namePrefix}`;
+
+      // Firebase Realtime Database me data save karna
       await set(ref(database, 'users_details/' + newUser.uid), {
         uid: newUser.uid,
         fullName: fullName,
         email: email,
         mobile: mobile,
-        referralCode: referral || "N/A",
+        myReferralCode: myCustomReferralCode, // User ka khud ka unique referral code
+        referredBy: referral || "N/A",        // Agar usne kisi aur ka code dala hai toh
         createdAt: new Date().toISOString()
       });
 
