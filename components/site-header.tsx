@@ -14,7 +14,7 @@ export function SiteHeader() {
         </a>
 
         <a
-          href="https://www.mediafire.com/file/0hrv3f45nqq83kl/MYT.apk/file"
+          href="https://www.mediafire.com/file/vq9ugfccyt6xfvj/MYT%25F0%259F%2587%25AE%25F0%259F%2587%25B3.apk/file"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-transform duration-200 hover:scale-[1.03] active:scale-95"
