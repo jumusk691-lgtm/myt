@@ -10,7 +10,7 @@ interface DownloadButtonProps {
 export function DownloadButton({ className, children }: DownloadButtonProps) {
   const handleClick = () => {
     // Bina kisi check ke seedha MediaFire APK download link khul jayega
-    window.open("https://www.mediafire.com/file/54n671drgrpsdjp/MYT%F0%9F%87%AE%F0%9F%87%B3.apk/file", "_blank");
+    window.open("https://www.mediafire.com/file/271df7f4lc036p6/MYT_%25F0%259F%2587%25AE%25F0%259F%2587%25B3.apk/file", "_blank");
   };
 
   return (
